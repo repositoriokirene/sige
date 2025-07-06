@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoLocaliza - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        .map-container {
+            height: calc(100vh - 80px);
+        }
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        .input-effect:focus ~ label, .input-effect:not(:placeholder-shown) ~ label {
+            transform: translateY(-20px);
+            font-size: 12px;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div id="app" class="min-h-screen">
+        <div id="login-page" class="flex items-center justify-center min-h-screen gradient-bg">
+            <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+                <div class="text-center mb-8">
+                    <i class="fas fa-map-marker-alt text-blue-500 text-5xl mb-4"></i>
+                    <h1 class="text-3xl font-bold text-gray-800">GeoLocaliza</h1>
+                    <p class="text-gray-600">Acesse sua conta para continuar</p>
+                </div>
+                
+                <form id="login-form" class="space-y-6">
+                    <div class="relative">
+                        <input type="email" id="login-email" placeholder=" " 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 input-effect">
+                        <label for="login-email" class="absolute left-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none">E-mail</label>
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="password" id="login-password" placeholder=" " 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 input-effect">
+                        <label for="login-password" class="absolute left-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none">Senha</label>
+                    </div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember-me" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-700">Lembrar-me</label>
+                        </div>
+                        <a href="#" class="text-sm text-blue-600 hover:text-blue-500">Esqueceu a senha?</a>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                        Entrar
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-gray-600">Não tem uma conta? 
+                            <a href="#" id="show-signup" class="text-blue-600 hover:text-blue-500 font-medium">Cadastre-se</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div id="signup-page" class="hidden items-center justify-center min-h-screen gradient-bg">
+            <div class="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md">
+                <div class="text-center mb-8">
+                    <i class="fas fa-map-marked-alt text-blue-500 text-5xl mb-4"></i>
+                    <h1 class="text-3xl font-bold text-gray-800">Criar Conta</h1>
+                    <p class="text-gray-600">Preencha os dados para se cadastrar</p>
+                </div>
+                
+                <form id="signup-form" class="space-y-6">
+                    <div class="relative">
+                        <input type="text" id="signup-name" placeholder=" " 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 input-effect">
+                        <label for="signup-name" class="absolute left-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none">Nome Completo</label>
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="email" id="signup-email" placeholder=" " 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 input-effect">
+                        <label for="signup-email" class="absolute left-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none">E-mail</label>
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="password" id="signup-password" placeholder=" " 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 input-effect">
+                        <label for="signup-password" class="absolute left-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none">Senha</label>
+                    </div>
+                    
+                    <div class="relative">
+                        <input type="password" id="signup-confirm-password" placeholder=" " 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 input-effect">
+                        <label for="signup-confirm-password" class="absolute left-4 top-3 text-gray-500 transition-all duration-300 pointer-events-none">Confirmar Senha</label>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" id="terms" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <label for="terms" class="ml-2 block text-sm text-gray-700">
+                            Eu concordo com os <a href="#" class="text-blue-600 hover:text-blue-500">Termos de Serviço</a> e <a href="#" class="text-blue-600 hover:text-blue-500">Política de Privacidade</a>
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300">
+                        Cadastrar
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="text-gray-600">Já tem uma conta? 
+                            <a href="#" id="show-login" class="text-blue-600 hover:text-blue-500 font-medium">Faça login</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Dashboard (Hidden by default) -->
+        <div id="dashboard" class="hidden">
+            <!-- Header -->
+            <header class="bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center py-4">
+                        <div class="flex items-center">
+                            <button id="sidebar-toggle" class="mr-4 text-gray-500 hover:text-gray-700 focus:outline-none">
+                                <i class="fas fa-bars text-xl"></i>
+                            </button>
+                            <h1 class="text-xl font-bold text-gray-800 flex items-center">
+                                <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>
+                                GeoLocaliza
+                            </h1>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <button id="notification-btn" class="text-gray-500 hover:text-gray-700 focus:outline-none relative">
+                                    <i class="fas fa-bell text-xl"></i>
+                                    <span class="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+                                </button>
+                                <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-white rounded-md shadow-lg py-1 z-50">
+                                    <div class="px-4 py-2 border-b border-gray-200">
+                                        <h3 class="text-sm font-medium text-gray-700">Notificações</h3>
+                                    </div>
+                                    <div class="max-h-60 overflow-y-auto">
+                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas fa-store text-blue-500 mr-2"></i>
+                                                </div>
+                                                <div>
+                                                    <p>Novo estabelecimento cadastrado na sua área</p>
+                                                    <p class="text-xs text-gray-500">10 min atrás</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                            <div class="flex items-center">
+                                                <div class="flex-shrink-0">
+                                                    <i class="fas fa-exclamation-circle text-yellow-500 mr-2"></i>
+                                                </div>
+                                                <div>
+                                                    <p>Atualização disponível para o sistema</p>
+                                                    <p class="text-xs text-gray-500">Ontem</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                    <div class="px-4 py-2 border-t border-gray-200">
+                                        <a href="#" class="text-sm text-blue-600 hover:text-blue-500">Ver todas</a>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="relative">
+                                <button id="user-menu-btn" class="flex items-center space-x-2 focus:outline-none">
+                                    <div class="h-8 w-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium">
+                                        <span>JD</span>
+                                    </div>
+                                    <span class="text-gray-700 font-medium hidden md:inline">John Doe</span>
+                                    <i class="fas fa-chevron-down text-gray-500 text-xs"></i>
+                                </button>
+                                <div id="user-menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-user mr-2"></i> Perfil
+                                    </a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-cog mr-2"></i> Configurações
+                                    </a>
+                                    <div class="border-t border-gray-200"></div>
+                                    <a href="#" id="logout-btn" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                        <i class="fas fa-sign-out-alt mr-2"></i> Sair
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main Content -->
+            <div class="flex">
+                <!-- Sidebar -->
+                <div id="sidebar" class="sidebar bg-white w-64 h-screen shadow-md fixed overflow-y-auto transform -translate-x-full md:translate-x-0 z-40">
+                    <div class="px-4 py-6">
+                        <div class="flex items-center space-x-2 mb-8">
+                            <i class="fas fa-map-marker-alt text-blue-500 text-2xl"></i>
+                            <h2 class="text-xl font-bold text-gray-800">GeoLocaliza</h2>
+                        </div>
+                        
+                        <nav>
+                            <div class="mb-4">
+                                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Menu</h3>
+                                <ul class="space-y-1">
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-100 rounded-lg text-blue-700">
+                                            <i class="fas fa-map mr-3"></i>
+                                            Mapa
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-store mr-3"></i>
+                                            Estabelecimentos
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-chart-line mr-3"></i>
+                                            Relatórios
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-users mr-3"></i>
+                                            Usuários
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Ferramentas</h3>
+                                <ul class="space-y-1">
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-plus-circle mr-3"></i>
+                                            Adicionar Local
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-search-location mr-3"></i>
+                                            Busca Avançada
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-download mr-3"></i>
+                                            Exportar Dados
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Configurações</h3>
+                                <ul class="space-y-1">
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-cog mr-3"></i>
+                                            Configurações
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg">
+                                            <i class="fas fa-question-circle mr-3"></i>
+                                            Ajuda
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+                
+                <!-- Main Content Area -->
+                <div class="flex-1 ml-0 md:ml-64">
+                    <!-- Map Dashboard -->
+                    <div class="p-4">
+                        <div class="bg-white rounded-lg shadow-sm p-4 mb-4">
+                            <div class="flex flex-wrap items-center justify-between mb-4">
+                                <h2 class="text-lg font-semibold text-gray-800">Mapa de Estabelecimentos</h2>
+                                <div class="flex space-x-2">
+                                    <div class="relative">
+                                        <input type="text" placeholder="Buscar local..." 
+                                            class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                    </div>
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+                                        <i class="fas fa-filter mr-2"></i>
+                                        Filtros
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                                <div class="bg-blue-50 rounded-lg p-4 flex items-center justify-between card-hover">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Estabelecimentos</p>
+                                        <p class="text-2xl font-bold text-blue-600">248</p>
+                                    </div>
+                                    <div class="bg-blue-100 p-3 rounded-full">
+                                        <i class="fas fa-store text-blue-600"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-4 flex items-center justify-between card-hover">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Ativos Hoje</p>
+                                        <p class="text-2xl font-bold text-green-600">42</p>
+                                    </div>
+                                    <div class="bg-green-100 p-3 rounded-full">
+                                        <i class="fas fa-check-circle text-green-600"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-yellow-50 rounded-lg p-4 flex items-center justify-between card-hover">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Pendentes</p>
+                                        <p class="text-2xl font-bold text-yellow-600">7</p>
+                                    </div>
+                                    <div class="bg-yellow-100 p-3 rounded-full">
+                                        <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                                    </div>
+                                </div>
+                                <div class="bg-purple-50 rounded-lg p-4 flex items-center justify-between card-hover">
+                                    <div>
+                                        <p class="text-sm text-gray-600">Novos (7 dias)</p>
+                                        <p class="text-2xl font-bold text-purple-600">18</p>
+                                    </div>
+                                    <div class="bg-purple-100 p-3 rounded-full">
+                                        <i class="fas fa-plus text-purple-600"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                                <div class="lg:col-span-2">
+                                    <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                                        <div id="map" class="map-container w-full rounded-lg"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                                        <h3 class="font-medium text-gray-800 mb-4">Estabelecimentos Recentes</h3>
+                                        <div class="space-y-4 max-h-96 overflow-y-auto">
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                                    <i class="fas fa-store"></i>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <p class="text-sm font-medium text-gray-900">Supermercado Bom Preço</p>
+                                                    <p class="text-sm text-gray-500">Av. Paulista, 1000 - São Paulo/SP</p>
+                                                    <p class="text-xs text-gray-400">Adicionado há 2 horas</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                                                    <i class="fas fa-utensils"></i>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <p class="text-sm font-medium text-gray-900">Restaurante Sabor Mineiro</p>
+                                                    <p class="text-sm text-gray-500">R. Oscar Freire, 500 - São Paulo/SP</p>
+                                                    <p class="text-xs text-gray-400">Adicionado ontem</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center text-yellow-600">
+                                                    <i class="fas fa-gas-pump"></i>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <p class="text-sm font-medium text-gray-900">Posto Shell</p>
+                                                    <p class="text-sm text-gray-500">Av. Brigadeiro Faria Lima, 2000 - São Paulo/SP</p>
+                                                    <p class="text-xs text-gray-400">Adicionado há 2 dias</p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-start">
+                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
+                                                    <i class="fas fa-shopping-bag"></i>
+                                                </div>
+                                                <div class="ml-3">
+                                                    <p class="text-sm font-medium text-gray-900">Shopping Center Norte</p>
+                                                    <p class="text-sm text-gray-500">Travessa Casalbuono, 120 - São Paulo/SP</p>
+                                                    <p class="text-xs text-gray-400">Adicionado há 3 dias</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4 text-center">
+                                            <a href="#" class="text-sm text-blue-600 hover:text-blue-500 font-medium">Ver todos</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle between login and signup pages
+        document.getElementById('show-signup').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('signup-page').classList.remove('hidden');
+        });
+        
+        document.getElementById('show-login').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('signup-page').classList.add('hidden');
+            document.getElementById('login-page').classList.remove('hidden');
+        });
+        
+        // Login form submission
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Simulate successful login
+            document.getElementById('login-page').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+            initMap();
+        });
+        
+        // Signup form submission
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Simulate successful signup and redirect to login
+            document.getElementById('signup-page').classList.add('hidden');
+            document.getElementById('login-page').classList.remove('hidden');
+        });
+        
+        // Logout button
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('dashboard').classList.add('hidden');
+            document.getElementById('login-page').classList.remove('hidden');
+        });
+        
+        // Toggle sidebar on mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+        
+        // Toggle notification dropdown
+        document.getElementById('notification-btn').addEventListener('click', function() {
+            document.getElementById('notification-dropdown').classList.toggle('hidden');
+            document.getElementById('user-menu-dropdown').classList.add('hidden');
+        });
+        
+        // Toggle user menu dropdown
+        document.getElementById('user-menu-btn').addEventListener('click', function() {
+            document.getElementById('user-menu-dropdown').classList.toggle('hidden');
+            document.getElementById('notification-dropdown').classList.add('hidden');
+        });
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#notification-btn')) {
+                document.getElementById('notification-dropdown').classList.add('hidden');
+            }
+            if (!e.target.closest('#user-menu-btn')) {
+                document.getElementById('user-menu-dropdown').classList.add('hidden');
+            }
+        });
+        
+        // Initialize Google Map
+        function initMap() {
+            // Default to São Paulo coordinates
+            const saoPaulo = { lat: -23.5505, lng: -46.6333 };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 12,
+                center: saoPaulo,
+                styles: [
+                    {
+                        "featureType": "administrative",
+                        "elementType": "labels.text.fill",
+                        "stylers": [
+                            {
+                                "color": "#444444"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "landscape",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#f2f2f2"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "poi",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "saturation": -100
+                            },
+                            {
+                                "lightness": 45
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.highway",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "simplified"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "road.arterial",
+                        "elementType": "labels.icon",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "transit",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    },
+                    {
+                        "featureType": "water",
+                        "elementType": "all",
+                        "stylers": [
+                            {
+                                "color": "#d4e6f4"
+                            },
+                            {
+                                "visibility": "on"
+                            }
+                        ]
+                    }
+                ]
+            });
+            
+            // Sample markers for establishments
+            const establishments = [
+                {
+                    name: "Supermercado Bom Preço",
+                    position: { lat: -23.5558, lng: -46.6396 },
+                    type: "supermarket",
+                    address: "Av. Paulista, 1000 - São Paulo/SP"
+                },
+                {
+                    name: "Restaurante Sabor Mineiro",
+                    position: { lat: -23.5612, lng: -46.6559 },
+                    type: "restaurant",
+                    address: "R. Oscar Freire, 500 - São Paulo/SP"
+                },
+                {
+                    name: "Posto Shell",
+                    position: { lat: -23.5687, lng: -46.6483 },
+                    type: "gas_station",
+                    address: "Av. Brigadeiro Faria Lima, 2000 - São Paulo/SP"
+                },
+                {
+                    name: "Shopping Center Norte",
+                    position: { lat: -23.5205, lng: -46.5967 },
+                    type: "shopping",
+                    address: "Travessa Casalbuono, 120 - São Paulo/SP"
+                },
+                {
+                    name: "Farmácia Popular",
+                    position: { lat: -23.5432, lng: -46.6291 },
+                    type: "pharmacy",
+                    address: "R. Augusta, 1500 - São Paulo/SP"
+                },
+                {
+                    name: "Academia Fit",
+                    position: { lat: -23.5501, lng: -46.6345 },
+                    type: "gym",
+                    address: "R. Haddock Lobo, 1000 - São Paulo/SP"
+                },
+                {
+                    name: "Hotel Plaza",
+                    position: { lat: -23.5478, lng: -46.6357 },
+                    type: "hotel",
+                    address: "Alameda Santos, 100 - São Paulo/SP"
+                }
+            ];
+            
+            // Icons for different establishment types
+            const icons = {
+                supermarket: {
+                    icon: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+                },
+                restaurant: {
+                    icon: "https://maps.google.com/mapfiles/ms/icons/red-dot.png"
+                },
+                gas_station: {
+                    icon: "https://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
+                },
+                shopping: {
+                    icon: "https://maps.google.com/mapfiles/ms/icons/purple-dot.png"
+                },
+                pharmacy: {
+                    icon: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
+                },
+                gym: {
+                    icon: "https://maps.google.com/mapfiles/ms/icons/orange-dot.png"
+                },
+                hotel: {
+                    icon: "https://maps.google.com/mapfiles/ms/icons/pink-dot.png"
+                }
+            };
+            
+            // Create markers for each establishment
+            establishments.forEach(establishment => {
+                const marker = new google.maps.Marker({
+                    position: establishment.position,
+                    map: map,
+                    title: establishment.name,
+                    icon: icons[establishment.type].icon
+                });
+                
+                // Add info window to each marker
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div class="p-2">
+                            <h3 class="font-bold text-lg">${establishment.name}</h3>
+                            <p class="text-gray-600">${establishment.address}</p>
+                            <div class="mt-2">
+                                <span class="inline-block px-2 py-1 text-xs font-semibold rounded-full 
+                                    ${establishment.type === 'supermarket' ? 'bg-blue-100 text-blue-800' : ''}
+                                    ${establishment.type === 'restaurant' ? 'bg-red-100 text-red-800' : ''}
+                                    ${establishment.type === 'gas_station' ? 'bg-yellow-100 text-yellow-800' : ''}
+                                    ${establishment.type === 'shopping' ? 'bg-purple-100 text-purple-800' : ''}
+                                    ${establishment.type === 'pharmacy' ? 'bg-green-100 text-green-800' : ''}
+                                    ${establishment.type === 'gym' ? 'bg-orange-100 text-orange-800' : ''}
+                                    ${establishment.type === 'hotel' ? 'bg-pink-100 text-pink-800' : ''}">
+                                    ${establishment.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                </span>
+                            </div>
+                            <div class="mt-2">
+                                <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+                                    <i class="fas fa-info-circle mr-1"></i> Detalhes
+                                </button>
+                            </div>
+                        </div>
+                    `
+                });
+                
+                marker.addListener('click', () => {
+                    infoWindow.open(map, marker);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

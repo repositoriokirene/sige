@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+*{
+    font-family: "Inter", sans-serif;
+}
+
+:root {
+  /*--primary_color: #fda702;*/
+  --primary_color: #2563eb;
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+}
+.map-container {
+    height: calc(100vh - 80px);
+}
+.sidebar {
+    transition: all 0.3s ease;
+}
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.input-effect:focus ~ label, .input-effect:not(:placeholder-shown) ~ label {
+    transform: translateY(-20px);
+    font-size: 12px;
+    color: #3b82f6;
+}
+
+.bgcolor {
+    background-color: var(--primary_color);
+}
+
+.txcolor {
+    color: var(--primary_color);
+}
+
+.active {
+    background-color: var(--primary_color);
+}
+.alert-success {
+    color: #15803d;
+    background-color: #dcfce7;
+    border-color: #15803d;
+}
+.alert-danger {
+    color: #b91c1c;
+    background-color: #fee2e2;
+    border-color: #b91c1c;
+}
+
+#toast {
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  z-index: 9999;
+  min-width: 200px;
+  max-width: 300px;
+  background: #dc2626;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+}
+#toast.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+#toast.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+#toast button {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  margin-left: 0.5rem;
+  cursor: pointer;
+  color: #fff;
+}

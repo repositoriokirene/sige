@@ -1,0 +1,16 @@
+<div id="categoria-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 hidden">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md">
+        <h3 id="categoria-modal-title" class="text-lg font-semibold mb-4">Nova Categoria</h3>
+        <form id="categoria-form">
+            <input type="hidden" id="categoria-id">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2">Descrição</label>
+                <input type="text" id="descricao" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" id="cancelar-categoria" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg mr-2">Cancelar</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+
+{% extends 'dashboard.html' %}
+{% load static %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block page %}{% endblock %}
+
+{% block ta %}active-sidebar-item{% endblock %}
+
+{% block content %}
+
+<div class="flex flex-wrap items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold text-gray-800">Mapa de Estabelecimentos</h2>
+    <div class="flex space-x-2">
+        <div class="relative">
+            <input type="text" id="search-map" placeholder="Buscar local..." 
+                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <i class="fas fa-filter mr-2"></i>
+            Filtros
+        </button>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+    <div class="bg-blue-50 rounded-lg p-4 flex items-center justify-between card-hover">
+        <div>
+            <p class="text-sm text-gray-600">Estabelecimentos</p>
+            <p class="text-2xl font-bold text-blue-600">{{ qty_estabelecimentos }}</p>
+        </div>
+        <div class="bg-blue-100 p-3 rounded-full">
+            <i class="fas fa-store text-blue-600"></i>
+        </div>
+    </div>
+    <div class="bg-green-50 rounded-lg p-4 flex items-center justify-between card-hover">
+        <div>
+            <p class="text-sm text-gray-600">Regulados</p>
+            <p class="text-2xl font-bold text-green-600">{{ qty_reguladas }}</p>
+        </div>
+        <div class="bg-green-100 p-3 rounded-full">
+            <i class="fas fa-check-circle text-green-600"></i>
+        </div>
+    </div>
+    <div class="bg-yellow-50 rounded-lg p-4 flex items-center justify-between card-hover">
+        <div>
+            <p class="text-sm text-gray-600">Pendentes</p>
+            <p class="text-2xl font-bold text-yellow-600">{{ qty_pendentes }}</p>
+        </div>
+        <div class="bg-yellow-100 p-3 rounded-full">
+            <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+        </div>
+    </div>
+    <div class="bg-purple-50 rounded-lg p-4 flex items-center justify-between card-hover">
+        <div>
+            <p class="text-sm text-gray-600">Fora de Actividade</p>
+            <p class="text-2xl font-bold text-red-600">{{ qty_fora }}</p>
+        </div>
+        <div class="bg-red-100 p-3 rounded-full">
+            <i class="fas fa-x text-red-600"></i>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+    <div class="lg:col-span-2">
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <!--<div id="map" class="map-container w-full rounded-lg"></div>-->
+            <div id="map" class="bg-white border border-gray-200 rounded-lg overflow-hidden" style="height: 500px;"></div>
+            
+        </div>
+    </div>
+    
+    <div>
+        <div class="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 class="font-medium text-gray-800 mb-4">Estabelecimentos Recentes</h3>
+            <div class="space-y-4 max-h-96 overflow-y-auto">
+                {% for e in estabelecimentos %}
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">{{ e.nome }}</p>
+                        <p class="text-sm text-gray-500">{{ e.categoria.descricao }}</p>
+                        <p class="text-xs text-gray-400">{{ e.criado_em }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="mt-4 text-center">
+                <a href="{% url 'estabelecimentos_page' %}" class="text-sm text-blue-600 hover:text-blue-500 font-medium">Ver todos</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="{% static 'js/home.js' %}" ></script>
+
+{% endblock %}
