@@ -1,18 +1,16 @@
-// Ícones personalizados (defina estes fora do escopo da função para reutilizar)
+// Ícones personalizados (ajuste o caminho conforme necessário)
 const iconVerde = L.icon({
     iconUrl: "/static/img/eicon-v.png",
     iconSize: [30, 30],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
 });
-
 const iconAmarelo = L.icon({
     iconUrl: "/static/img/eicon-a.png",
     iconSize: [30, 30],
     iconAnchor: [15, 30],
     popupAnchor: [0, -30]
 });
-
 const iconVermelho = L.icon({
     iconUrl: "/static/img/eicon-vr.png",
     iconSize: [30, 30],
@@ -40,7 +38,6 @@ function renderMarkers(estabs) {
         if (e.situacao === 'pendente') icone = iconAmarelo;
         else if (e.situacao === 'fora') icone = iconVermelho;
 
-
         const marker = L.marker([e.latitude, e.longitude], { icon: icone })
             .bindPopup(`
                 <strong>${e.nome}</strong>
@@ -56,28 +53,37 @@ function renderMarkers(estabs) {
     });
 }
 
+// Função para buscar todos os estabelecimentos de todas as páginas
+async function fetchAllEstabelecimentos() {
+    let url = '/api/estabelecimentos/?page=1&page_size=100';
+    let results = [];
+    let next = url;
+    while (next) {
+        const res = await fetch(next);
+        const data = await res.json();
+        results = results.concat(data.results);
+        next = data.next;
+    }
+    return results;
+}
+
 // Inicialização: pega localização e carrega estabelecimentos
 navigator.geolocation.getCurrentPosition(function (position) {
     const latitude = position.coords.latitude;
     const longitude = position.coords.longitude;
     inicializarMapa(latitude, longitude);
 
-    fetch('/api/estabelecimentos/')
-        .then(res => res.json())
-        .then(data => {
-            estabelecimentosData = data.results;
-            renderMarkers(estabelecimentosData);
-        });
+    fetchAllEstabelecimentos().then(data => {
+        estabelecimentosData = data;
+        renderMarkers(estabelecimentosData);
+    });
 }, function (error) {
-    // Fallback: mostra mapa centrado em uma coordenada padrão
     console.error("Erro ao obter localização:", error);
     inicializarMapa(-8.8399876, 13.2894368);
-    fetch('/api/estabelecimentos/')
-        .then(res => res.json())
-        .then(data => {
-            estabelecimentosData = data.results;
-            renderMarkers(estabelecimentosData);
-        });
+    fetchAllEstabelecimentos().then(data => {
+        estabelecimentosData = data;
+        renderMarkers(estabelecimentosData);
+    });
 });
 
 // Manipulação da busca no mapa
@@ -87,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function() {
     searchInput.addEventListener('input', function(e) {
         const query = e.target.value.trim().toLowerCase();
         if (!query) {
-            // Mostra todos
             renderMarkers(estabelecimentosData);
             return;
         }
