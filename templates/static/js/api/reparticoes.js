@@ -1,4 +1,4 @@
-const API_URL = '/api/estabelecimentos/';
+const API_URL = '/api/reparticoes/';
 let currentPage = 1;
 let pageSize = 10;
 let totalItems = 0;
@@ -27,14 +27,10 @@ function montaQuery(page, filters) {
     params.set('page', page);
     params.set('page_size', pageSize);
     if (filters.search) params.set('search', filters.search);
-    if (filters.categoria) params.set('categoria', filters.categoria);
-    if (filters.situacao) params.set('situacao', filters.situacao);
-    if (filters.data_inicial) params.set('data_inicial', filters.data_inicial);
-    if (filters.data_final) params.set('data_final', filters.data_final);
     return params.toString();
 }
 
-function fetchEstablishments(page = 1, filters = {}) {
+function fetchReparticoes(page = 1, filters = {}) {
     const params = montaQuery(page, filters);
     fetch(`${API_URL}?${params}`)
         .then(res => res.json())
@@ -46,52 +42,33 @@ function fetchEstablishments(page = 1, filters = {}) {
         });
 }
 
-function updateTable(establishments) {
-    const tbody = document.getElementById('establishments-table-body');
+function updateTable(reparticoes) {
+    const tbody = document.getElementById('reparticoes-table-body');
     tbody.innerHTML = '';
-    if (!establishments || establishments.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-gray-500">Nenhum estabelecimento encontrado.</td></tr>`;
+    if (!reparticoes || reparticoes.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-gray-500">Nenhuma reapartição encontrada.</td></tr>`;
         return;
     }
-    establishments.forEach(est => {
-        let statusClass = '';
+    reparticoes.forEach(r => {
 
-        switch (est.situacao) {
-            case 'regulada':
-                statusClass = 'bg-green-100 text-green-800';
-                break;
-            case 'pendente':
-                statusClass = 'bg-yellow-100 text-yellow-800';
-                break;
-            case 'fora':
-                statusClass = 'bg-red-100 text-red-800';
-                break;
-        }
         tbody.innerHTML += `
             <tr>
-                <td class="px-6 py-4">${est.nome}</td>
-                <td class="px-6 py-4">${est.categoria_descricao}</td>
-                <td class="px-6 py-4">
-                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
-                        ${est.situacao_display}
-                    </span>
-                </td>
-                <td class="px-6 py-4">${new Date(est.criado_em).toLocaleDateString()}</td>
+                <td class="px-6 py-4">${r.regiao_tributaria}</td>
+                <td class="px-6 py-4">${r.provincia}</td>
+                <td class="px-6 py-4">${r.municipio}</td>
+                <td class="px-6 py-4">${r.reparticao}</td>
+                <td class="px-6 py-4">${r.referencia}</td>
                 <td class="px-6 py-4 text-right">
-                    <button data-id="${est.id}" class="ver-btn text-green-600 hover:underline mr-2">
-                        <i class="fa-solid fa-eye"></i>
-                    </button>
-                    <button data-id="${est.id}" class="edit-btn text-blue-600 hover:underline mr-2">
+                    <button data-id="${r.id}" class="edit-btn text-blue-600 hover:underline mr-2">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button data-id="${est.id}" class="delete-btn text-red-600 hover:underline">
+                    <button data-id="${r.id}" class="delete-btn text-red-600 hover:underline">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
             </tr>
         `;
     });
-    console.log(establishments);
     // Ver
     document.querySelectorAll('.ver-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -144,20 +121,20 @@ function updatePagination(total, page) {
     if (prevBtn) prevBtn.onclick = () => {
         if (currentPage > 1) {
             currentPage--;
-            fetchEstablishments(currentPage, currentFilters);
+            fetchReparticoes(currentPage, currentFilters);
         }
     };
     const nextBtn = document.getElementById('next-page');
     if (nextBtn) nextBtn.onclick = () => {
         if (currentPage < totalPages) {
             currentPage++;
-            fetchEstablishments(currentPage, currentFilters);
+            fetchReparticoes(currentPage, currentFilters);
         }
     };
     document.querySelectorAll('.page-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             currentPage = parseInt(btn.dataset.page);
-            fetchEstablishments(currentPage, currentFilters);
+            fetchReparticoes(currentPage, currentFilters);
         });
     });
 }
@@ -165,8 +142,8 @@ function updatePagination(total, page) {
 // Modal helpers
 function abrirModalAdicionar() {
     limparModal();
-    document.getElementById('modal-title').textContent = "Novo Estabelecimento";
-    document.getElementById('estabelecimento-modal').classList.remove('hidden');
+    document.getElementById('modal-title').textContent = "Nova Repartição";
+    document.getElementById('reparticao-modal').classList.remove('hidden');
 }
 
 // abrir modal pra editar
@@ -174,32 +151,30 @@ function abrirModalEditar(id) {
     fetch(`${API_URL}${id}/`)
         .then(res => res.json())
         .then(data => {
-            document.getElementById('modal-title').textContent = "Editar Estabelecimento";
-            document.getElementById('estabelecimento-id').value = data.id;
-            document.getElementById('nome').value = data.nome;
-            document.getElementById('nif').value = data.nif;
-            document.getElementById('categoria').value = data.categoria;
-            document.getElementById('situacao').value = data.situacao;
-            document.getElementById('latitude').value = data.latitude || '';
-            document.getElementById('longitude').value = data.longitude || '';
-            document.getElementById('estabelecimento-modal').classList.remove('hidden');
+            document.getElementById('modal-title').textContent = "Editar Repartição";
+            document.getElementById('reparticao-id').value = data.id;
+            document.getElementById('regiao_tributaria').value = data.regiao_tributaria;
+            document.getElementById('provincia').value = data.provincia;
+            document.getElementById('municipio').value = data.municipio;
+            document.getElementById('reparticao').value = data.reparticao;
+            document.getElementById('referencia').value = data.referencia;
+            document.getElementById('reparticao-modal').classList.remove('hidden');
         });
 }
 
 // fechar o modal
 function fecharModal() {
-    document.getElementById('estabelecimento-modal').classList.add('hidden');
+    document.getElementById('reparticao-modal').classList.add('hidden');
 }
 
 // Limpar os campos do modal após sair
 function limparModal() {
-    document.getElementById('estabelecimento-id').value = '';
-    document.getElementById('nome').value = '';
-    document.getElementById('nif').value = '';
-    document.getElementById('categoria').value = '';
-    document.getElementById('situacao').value = 'regulada';
-    document.getElementById('latitude').value = '';
-    document.getElementById('longitude').value = '';
+    document.getElementById('reparticao-id').value = '';
+    document.getElementById('regiao_tributaria').value = '';
+    document.getElementById('provincia').value = '';
+    document.getElementById('municipio').value = '';
+    document.getElementById('reparticao').value = '';
+    document.getElementById('referencia').value = '';
 }
 
 // Modal remover
@@ -217,13 +192,11 @@ function abrirModalVer(id) {
         .then(res => res.json())
         .then(data => {
             let html = `
-                <div class="mb-2"><strong>Nome:</strong> ${data.nome}</div>
-                <div class="mb-2"><strong>NIF:</strong> ${data.nif || '-'}</div>
-                <div class="mb-2"><strong>Categoria:</strong> ${data.categoria}</div>
-                <div class="mb-2"><strong>Status:</strong> ${data.situacao_display}</div>
-                <div class="mb-2"><strong>Latitude:</strong> ${data.latitude}</div>
-                <div class="mb-2"><strong>Longitude:</strong> ${data.longitude}</div>
-                <div class="mb-2"><strong>Data Cadastro:</strong> ${new Date(data.criado_em).toLocaleString()}</div>
+                <div class="mb-2"><strong>Região Tributária:</strong> ${data.regiao_tributaria}</div>
+                <div class="mb-2"><strong>Província:</strong> ${data.provincia}</div>
+                <div class="mb-2"><strong>Município:</strong> ${data.municipio}</div>
+                <div class="mb-2"><strong>Repartição:</strong> ${data.reparticao}</div>
+                <div class="mb-2"><strong>Referência:</strong> ${data.referencia}</div>
             `;
             document.getElementById('ver-conteudo').innerHTML = html;
             document.getElementById('ver-modal').classList.remove('hidden');
@@ -254,62 +227,32 @@ function parseDjangoError(data) {
 
 // Eventos modais e outros
 document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('btn-aplicar').addEventListener('click', () => {
-        console.log('Data Inicial:', document.getElementById('filter-data-inicial').value);
-        console.log('Data Final:', document.getElementById('filter-data-final').value);
-        currentFilters = {
-            categoria: document.getElementById('filter-categoria').value,
-            situacao: document.getElementById('filter-situacao').value,
-            data_inicial: document.getElementById('filter-data-inicial').value,
-            data_final: document.getElementById('filter-data-final').value
-        };
-        currentPage = 1;
-        fetchEstablishments(currentPage, currentFilters);
-    });
-    document.getElementById('btn-limpar').addEventListener('click', () => {
-        document.getElementById('filter-categoria').value = '';
-        document.getElementById('filter-situacao').value = '';
-        document.getElementById('filter-data-inicial').value = '';
-        document.getElementById('filter-data-final').value = '';
-        document.getElementById('search-establishments').value = '';
-        currentFilters = {};
-        currentPage = 1;
-        fetchEstablishments(currentPage, currentFilters);
-    });
-
     // Busca instantânea
-    document.getElementById('search-establishments').addEventListener('input', function(e) {
+    document.getElementById('search-reparticoes').addEventListener('input', function(e) {
         currentFilters.search = e.target.value;
         currentPage = 1;
-        fetchEstablishments(currentPage, currentFilters);
+        fetchReparticoes(currentPage, currentFilters);
     });
 
     // Modal Adicionar
-    document.getElementById('add-establishment').addEventListener('click', abrirModalAdicionar);
+    document.getElementById('add-reparticao').addEventListener('click', abrirModalAdicionar);
 
     // Fechar modal (X ou cancelar)
     document.getElementById('close-modal').addEventListener('click', fecharModal);
     document.getElementById('cancelar-modal').addEventListener('click', fecharModal);
 
-    // Botão de Geolocalização
-    document.getElementById('btn-localizacao').addEventListener('click', function(e) {
-        e.preventDefault();
-        capturarLocalizacao();
-    });
-
 
 
     // Salvar (add/edit)
-    document.getElementById('estabelecimento-form').addEventListener('submit', function(e) {
+    document.getElementById('reparticao-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        let id = document.getElementById('estabelecimento-id').value;
+        let id = document.getElementById('reparticao-id').value;
         let payload = {
-            nome: document.getElementById('nome').value,
-            nif: document.getElementById('nif').value,
-            categoria: document.getElementById('categoria').value,
-            situacao: document.getElementById('situacao').value,
-            latitude: document.getElementById('latitude').value,
-            longitude: document.getElementById('longitude').value
+            regiao_tributaria: document.getElementById('regiao_tributaria').value,
+            provincia: document.getElementById('provincia').value,
+            municipio: document.getElementById('municipio').value,
+            reparticao: document.getElementById('reparticao').value,
+            referencia: document.getElementById('referencia').value,
         };
         let method = id ? 'PUT' : 'POST';
         let url = id ? `${API_URL}${id}/` : API_URL;
@@ -324,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(res => {
             if (res.ok) {
                 fecharModal();
-                fetchEstablishments(currentPage, currentFilters);
+                fetchReparticoes(currentPage, currentFilters);
             } else {
                 res.json().then(data => {
                     showToast(parseDjangoError(data));
@@ -346,7 +289,7 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(res => {
                 fecharModalRemover();
-                fetchEstablishments(currentPage, currentFilters);
+                fetchReparticoes(currentPage, currentFilters);
             });
         }
     });
@@ -355,6 +298,5 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('close-ver-modal').addEventListener('click', fecharModalVer);
     document.getElementById('fechar-ver-modal').addEventListener('click', fecharModalVer);
 
-
-    fetchEstablishments();
+    fetchReparticoes();
 });

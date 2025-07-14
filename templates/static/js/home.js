@@ -42,6 +42,7 @@ function renderMarkers(estabs) {
             .bindPopup(`
                 <strong>${e.nome}</strong>
                 <br>NIF: ${e.nif}
+                <br>Número de Estabelecimento: ${e.numero_estabelecimento}
                 <br>Categoria: ${e.categoria_descricao}
                 <br>Situação: ${e.situacao_display}
                 <br>Latitude: ${e.latitude}

@@ -1,0 +1,89 @@
+{% load static %}
+<div id="reparticao-modal" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-[500px] relative">
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-700" id="close-modal">&times;</button>
+        <h3 class="text-lg font-semibold mb-4" id="modal-title">Nova Repartição</h3>
+        <form id="reparticao-form" autocomplete="off">
+            <input type="hidden" id="reparticao-id">
+            <div class="mb-4">
+                <label class="block text-gray-700">Região Tributária</label>
+                <select id="regiao_tributaria" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                    <option value="PRIMEIRA">PRIMEIRA</option>
+                    <option value="SEGUNDA">SEGUNDA</option>
+                    <option value="TERCEIRA">TERCEIRA</option>
+                    <option value="QUARTA">QUARTA</option>
+                    <option value="QUINTA">QUINTA</option>
+                    <option value="SEXTA">SEXTA</option>
+                    <option value="SÉTIMA">SÉTIMA</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Província</label>
+                <select id="provincia" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                    <option value="BENGO">BENGO</option>
+                    <option value="BENGUELA">BENGUELA</option>
+                    <option value="BIÉ">BIÉ</option>
+                    <option value="CABINDA">CABINDA</option>
+                    <option value="CUANDO">CUANDO</option>
+                    <option value="CUANZA NORTE">CUANZA NORTE</option>
+                    <option value="CUANZA SUL">CUANZA SUL</option>
+                    <option value="CUBANGO">CUBANGO</option>
+                    <option value="CUNENE">CUNENE</option>
+                    <option value="HUAMBO">HUAMBO</option>
+                    <option value="HUILA">HUILA</option>
+                    <option value="ICOLE E BENGO">ICOLE E BENGO</option>
+                    <option value="LUANDA">LUANDA</option>
+                    <option value="LUNDA SUL">LUNDA SUL</option>
+                    <option value="LUNDA NORTE">LUNDA NORTE</option>
+                    <option value="MALANJE">MALANJE</option>
+                    <option value="MOXICO">MOXICO</option>
+                    <option value="MOXICO LESTE">MOXICO LESTE</option>
+                    <option value="NAMIBE">NAMIBE</option>
+                    <option value="UIGE">UIGE</option>
+                    <option value="ZAIRE">ZAIRE</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Município</label>
+                <input type="text" id="municipio" required class="w-full border rounded-lg px-3 py-2 mt-1">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Repartição</label>
+                <input type="text" id="reparticao" required class="w-full border rounded-lg px-3 py-2 mt-1">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700">Referência</label>
+                <input type="text" id="referencia" required class="w-full border rounded-lg px-3 py-2 mt-1">
+            </div>
+            <div class="flex justify-end">
+                <button type="button" class="mr-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-800" id="cancelar-modal">Cancelar</button>
+                <button type="submit" class="px-4 py-2 rounded-lg bg-blue-600 text-white" id="salvar-estabelecimento">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="confirm-modal" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-sm relative">
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-700" id="close-confirm-modal">&times;</button>
+        <h3 class="text-lg font-semibold mb-4">Confirmar remoção</h3>
+        <p>Tem certeza que deseja remover esta repartição?</p>
+        <div class="flex justify-end mt-6">
+            <button type="button" class="mr-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-800" id="cancelar-remocao">Cancelar</button>
+            <button type="button" class="px-4 py-2 rounded-lg bg-red-600 text-white" id="confirmar-remocao">Remover</button>
+        </div>
+    </div>
+</div>
+
+<div id="ver-modal" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg relative">
+        <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-700" id="close-ver-modal">&times;</button>
+        <h3 class="text-lg font-semibold mb-4">Detalhes da Repartição</h3>
+        <div id="ver-conteudo">
+            <!-- Conteúdo preenchido via JS -->
+        </div>
+        <div class="flex justify-end mt-6">
+            <button type="button" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-800" id="fechar-ver-modal">Fechar</button>
+        </div>
+    </div>
+</div>

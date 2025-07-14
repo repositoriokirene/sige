@@ -120,6 +120,12 @@
                                         </a>
                                     </li>
                                     <li>
+                                        <a href="{% url 'reparticoes_page' %}" class="flex items-center px-3 py-2 text-sm font-medium {% if request.resolver_match.url_name == 'reparticoes_page' %}text-white active{% else %} text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} rounded-lg">
+                                            <i class="fa-solid fa-landmark mr-3"></i>
+                                            Repartições
+                                        </a>
+                                    </li>
+                                    <li>
                                         <a href="#" class="flex items-center px-3 py-2 text-sm font-medium {% if request.resolver_match.url_name == 'relatorios_page' %}text-white active{% else %} text-gray-600 hover:text-gray-900 hover:bg-gray-50{% endif %} rounded-lg">
                                             <i class="fas fa-chart-line mr-3"></i>
                                             Relatórios
@@ -181,7 +187,7 @@
     {% include 'components/toast.html' %}
     <script src="{% static 'js/getcookie.js' %}"></script>
     <script src="{% static 'js/parse.js' %}"></script>
-    <script src="{% static 'js/localização.js' %}"></script>
+    <script src="{% static 'js/localizacao.js' %}"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
     <script src="{% static 'js/toast.js' %}"></script>
     {% block javascript %}

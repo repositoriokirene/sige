@@ -1,27 +1,28 @@
 const API_CATEGORIAS = '/api/categorias/';
-let categoriaIdEditando = null;
-let searchTimeout = null;
 let currentPage = 1;
 let pageSize = 10;
 let totalItems = 0;
-let currentSearch = "";
+let currentFilters = {};
+let removerId = null;
 
-function fetchCategorias(page = 1, search = "") {
-    currentPage = page;
-    currentSearch = search;
+function montaQuery(page, filters) {
     let params = new URLSearchParams();
     params.set('page', page);
     params.set('page_size', pageSize);
-    if (search) params.set('search', search);
+    if (filters.search) params.set('search', filters.search);
+    return params.toString();
+}
 
-    fetch(`${API_CATEGORIAS}?${params.toString()}`)
-    .then(res => res.json())
-    .then(data => {
-        totalItems = data.count;
-        updateTable(data.results);
-        updatePagination(totalItems, currentPage);
-        document.getElementById('total-items').textContent = totalItems;
-    });
+function fetchCategorias(page = 1, filters = {}) {
+    const params = montaQuery(page, filters);
+    fetch(`${API_CATEGORIAS}?${params}`)
+        .then(res => res.json())
+        .then(data => {
+            updateTable(data.results);
+            totalItems = data.count;
+            updatePagination(totalItems, page);
+            document.getElementById('total-items').textContent = totalItems;
+        });
 }
 
 function updateTable(categorias) {
@@ -37,17 +38,29 @@ function updateTable(categorias) {
                 <td class="px-6 py-4">${cat.id}</td>
                 <td class="px-6 py-4">${cat.descricao}</td>
                 <td class="px-6 py-4 text-right">
-                    <button data-id="${cat.id}" class="edit-cat-btn text-blue-600 hover:underline mr-2">Editar</button>
-                    <button data-id="${cat.id}" class="delete-cat-btn text-red-600 hover:underline">Excluir</button>
+                    <button data-id="${cat.id}" class="edit-btn text-blue-600 hover:underline mr-2">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button data-id="${cat.id}" class="delete-btn text-red-600 hover:underline">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </td>
             </tr>
         `;
     });
-    document.querySelectorAll('.edit-cat-btn').forEach(btn => {
-        btn.addEventListener('click', e => abrirModalEditar(e.target.dataset.id));
+    // Editar
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = e.target.closest('button').dataset.id;
+            abrirModalEditar(id);
+        });
     });
-    document.querySelectorAll('.delete-cat-btn').forEach(btn => {
-        btn.addEventListener('click', e => removerCategoria(e.target.dataset.id));
+    // Remover
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            removerId = e.target.closest('button').dataset.id;
+            abrirModalRemover();
+        });
     });
 }
 
@@ -79,62 +92,63 @@ function updatePagination(total, page) {
     const prevBtn = document.getElementById('prev-page');
     if (prevBtn) prevBtn.onclick = () => {
         if (currentPage > 1) {
-            fetchCategorias(currentPage - 1, currentSearch);
+            fetchCategorias(currentPage - 1, currentFilters);
         }
     };
     const nextBtn = document.getElementById('next-page');
     if (nextBtn) nextBtn.onclick = () => {
         if (currentPage < totalPages) {
-            fetchCategorias(currentPage + 1, currentSearch);
+            fetchCategorias(currentPage + 1, currentFilters);
         }
     };
     document.querySelectorAll('.page-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const page = parseInt(btn.dataset.page);
-            fetchCategorias(page, currentSearch);
+            fetchCategorias(page, currentFilters);
         });
     });
 }
 
 function abrirModalAdicionar() {
-    categoriaIdEditando = null;
-    document.getElementById('categoria-modal-title').textContent = "Nova Categoria";
-    document.getElementById('descricao').value = '';
-    document.getElementById('categoria-id').value = '';
+    limparModal();
+    document.getElementById('modal-title').textContent = "Nova Categoria";
     document.getElementById('categoria-modal').classList.remove('hidden');
 }
 
+// abrir modal pra editar
 function abrirModalEditar(id) {
     fetch(`${API_CATEGORIAS}${id}/`)
     .then(res => res.json())
     .then(data => {
-        categoriaIdEditando = id;
-        document.getElementById('categoria-modal-title').textContent = "Editar Categoria";
+        document.getElementById('modal-title').textContent = "Editar Categoria";
+        document.getElementById('categoria-id').value = data.id;
         document.getElementById('descricao').value = data.descricao;
         document.getElementById('categoria-modal').classList.remove('hidden');
-        document.getElementById('categoria-id').value = id;
     });
 }
 
-function fecharModalCategoria() {
+// fechar o modal
+function fecharModal() {
     document.getElementById('categoria-modal').classList.add('hidden');
 }
 
-function removerCategoria(id) {
-    if (!confirm("Tem certeza que deseja excluir esta categoria?")) return;
-    fetch(`${API_CATEGORIAS}${id}/`, {
-        method: 'DELETE',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
-        }
-    })
-    .then(res => {
-        if (res.ok) {
-            fetchCategorias(currentPage, currentSearch);
-        } else {
-            res.json().then(data => showToast(parseDjangoError(data)));
-        }
-    });
+// Limpar os campos do modal após sair
+function limparModal() {
+    document.getElementById('categoria-id').value = '';
+    document.getElementById('descricao').value = '';
+}
+
+// Modal remover
+function abrirModalRemover() {
+    document.getElementById('confirm-modal').classList.remove('hidden');
+}
+function fecharModalRemover() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+    removerId = null;
+}
+
+function fecharModalVer() {
+    document.getElementById('ver-modal').classList.add('hidden');
 }
 
 function parseDjangoError(data) {
@@ -154,33 +168,29 @@ function parseDjangoError(data) {
     return "Erro desconhecido.";
 }
 
+// Eventos modais e outros
 document.addEventListener('DOMContentLoaded', function() {
-    // Busca instantânea (debounce)
-    document.getElementById('search-categories').addEventListener('input', function(e) {
-        clearTimeout(searchTimeout);
-        const value = e.target.value;
-        searchTimeout = setTimeout(() => {
-            fetchCategorias(1, value);
-        }, 400);
+    // Busca instantânea
+    document.getElementById('search-categorias').addEventListener('input', function(e) {
+        currentFilters.search = e.target.value;
+        currentPage = 1;
+        fetchCategorias(currentPage, currentFilters);
     });
 
-    // Carrega categorias ao abrir a página
-    fetchCategorias();
+    // Modal Adicionar
+    document.getElementById('add-categoria').addEventListener('click', abrirModalAdicionar);
 
-    // Adicionar nova categoria
-    document.getElementById('add-category').addEventListener('click', abrirModalAdicionar);
+    // Fechar modal (X ou cancelar)
+    document.getElementById('close-modal').addEventListener('click', fecharModal);
+    document.getElementById('cancelar-modal').addEventListener('click', fecharModal);
 
-    // Cancelar modal
-    document.getElementById('cancelar-categoria').addEventListener('click', e => {
-        e.preventDefault();
-        fecharModalCategoria();
-    });
-
-    // Salvar (add/edit) categoria
+    // Salvar (add/edit)
     document.getElementById('categoria-form').addEventListener('submit', function(e) {
         e.preventDefault();
-        const descricao = document.getElementById('descricao').value;
-        const id = document.getElementById('categoria-id').value;
+        let id = document.getElementById('categoria-id').value;
+        let payload = {
+            descricao: document.getElementById('descricao').value,
+        }
         const method = id ? 'PUT' : 'POST';
         const url = id ? `${API_CATEGORIAS}${id}/` : API_CATEGORIAS;
         fetch(url, {
@@ -189,12 +199,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken'),
             },
-            body: JSON.stringify({ descricao })
+            body: JSON.stringify(payload)
         })
         .then(res => {
             if (res.ok) {
-                fecharModalCategoria();
-                fetchCategorias(currentPage, currentSearch);
+                fecharModal();
+                fetchCategorias(currentPage, currentFilters);
             } else {
                 res.json().then(data => {
                     showToast(parseDjangoError(data));
@@ -202,4 +212,26 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Modal Remover
+    document.getElementById('cancelar-remocao').addEventListener('click', fecharModalRemover);
+    document.getElementById('close-confirm-modal').addEventListener('click', fecharModalRemover);
+    document.getElementById('confirmar-remocao').addEventListener('click', function() {
+        if (removerId) {
+            fetch(`${API_CATEGORIAS}${removerId}/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(res => {
+                fecharModalRemover();
+                fetchCategorias(currentPage, currentFilters);
+            });
+        }
+    });
+
+
+    fetchCategorias();
+
 });

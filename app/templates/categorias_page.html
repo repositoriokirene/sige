@@ -7,12 +7,12 @@
 <div class="flex items-center justify-between mb-6">
     <h2 class="text-xl font-semibold text-gray-800">Lista de Categorias</h2>
     <div class="flex space-x-3">
-        <button id="add-category" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+        <button id="add-categoria" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
             <i class="fas fa-plus mr-2"></i>
             Adicionar
         </button>
         <div class="relative">
-            <input type="text" id="search-categories" placeholder="Buscar categoria..." 
+            <input type="text" id="search-categorias" placeholder="Buscar categoria..." 
                 class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
         </div>
@@ -45,5 +45,5 @@
 {% endblock %}
 
 {% block javascript %}
-<script src="{% static 'js/categorias.js' %}"></script>
+<script src="{% static 'js/api/categorias.js' %}"></script>
 {% endblock %}

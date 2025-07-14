@@ -1,0 +1,135 @@
+[
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "1ª REPARTIÇÃO FISCAL DE LUANDA",
+    "referencia": "1RFL"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "2ª REPARTIÇÃO FISCAL DE LUANDA",
+    "referencia": "2RLF"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "3ª REPARTIÇÃO FISCAL DE LUANDA",
+    "referencia": "3RLF"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "4ª REPARTIÇÃO FISCAL DE LUANDA",
+    "referencia": "4RLF"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "5ª REPARTIÇÃO FISCAL DE LUANDA",
+    "referencia": "5RLF"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "CACUACO",
+    "reparticao": "REPARTIÇÃO FISCAL DE VIANA",
+    "referencia": "RFV"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "REPARTIÇÃO FISCAL DE CACUACO",
+    "referencia": "RFCC"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "CATINTON",
+    "referencia": "PCT"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "MORRO BENTO",
+    "referencia": "PMB"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "CONGOLENSES",
+    "referencia": "PMC"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "KIKOLO",
+    "referencia": "PKK"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "HOJI-YA-HENDA (CAZENGA)",
+    "referencia": "PHYH"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "KIFICA",
+    "referencia": "PKC"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "LUANDA",
+    "reparticao": "CALENBA II",
+    "referencia": "PCB"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "VIANA",
+    "reparticao": "MERCADO DOS CORREIOS",
+    "referencia": "PMCO"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "VIANA",
+    "reparticao": "GRAFANIL BAR",
+    "referencia": "PGB"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "LUANDA",
+    "municipio": "VIANA",
+    "reparticao": "MERCADO DO 30",
+    "referencia": "PMT"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "BENGO",
+    "municipio": "AMBRIZ",
+    "reparticao": "REPARTIÇÃO FISCAL DE AMBRIZ",
+    "referencia": "RFA"
+  },
+  {
+    "regiao_tributaria": "TERCEIRA",
+    "provincia": "BENGO",
+    "municipio": "CAXITO",
+    "reparticao": "REPETIÇÃO FISCAL DE CAXITO",
+    "referencia": "RFC"
+  }
+]

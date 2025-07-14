@@ -1,0 +1,57 @@
+
+{% extends 'dashboard.html' %}
+{% load static %}
+
+{% block head %}<meta name="csrf-token" content="{{ csrf_token }}">{% endblock %}
+{% block title %}Repartições{% endblock %}
+
+{% block content %}
+
+
+<div class="flex flex-wrap items-center justify-between mb-6">
+    <h2 class="text-xl font-semibold text-gray-800">Lista de Repartições</h2>
+    <div class="flex space-x-3">
+        <button id="add-reparticao" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
+            <i class="fas fa-plus mr-2"></i>
+            Adicionar
+        </button>
+        <div class="relative">
+            <input type="text" id="search-reparticoes" placeholder="Buscar..." 
+                class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+    </div>
+</div>
+
+<div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+            <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Região Tributária</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Província</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Município</th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Repartição</th>
+                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Referência</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200" id="reparticoes-table-body">
+            <!-- Conteúdo dinâmico via JS -->
+        </tbody>
+    </table>
+</div>
+
+<div class="flex items-center justify-between mt-4">
+    <div class="text-sm text-gray-500">
+        Mostrando <span id="showing-from">1</span> a <span id="showing-to">10</span> de <span id="total-items">0</span> resultados
+    </div>
+    <div class="flex space-x-1" id="pagination-buttons">
+        <!-- Botões de paginação via JS -->
+    </div>
+</div>
+{% include 'components/modal-reparticoes.html' %}
+{% endblock %}
+
+{% block javascript %}
+<script src="{% static 'js/api/reparticoes.js' %}"></script>
+<script src="{% static 'js/localizacao.js' %}" ></script>
+{% endblock %}

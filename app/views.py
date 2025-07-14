@@ -38,3 +38,6 @@ def CategoriasPage(request):
         'categorias': categorias
     }
     return render(request, 'categorias_page.html', context)
+
+def ReparticoesPage(request):
+    return render(request, 'reparticoes_page.html')

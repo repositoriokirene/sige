@@ -1,40 +1,78 @@
 <div id="estabelecimento-modal" class="fixed z-50 inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-    <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg relative">
+    <div class="bg-white rounded-lg shadow-lg p-8 wbform relative">
         <button class="absolute top-2 right-2 text-gray-400 hover:text-gray-700" id="close-modal">&times;</button>
         <h3 class="text-lg font-semibold mb-4" id="modal-title">Novo Estabelecimento</h3>
         <form id="estabelecimento-form" autocomplete="off">
             <input type="hidden" id="estabelecimento-id">
-            <div class="mb-4">
-                <label class="block text-gray-700">Nome</label>
-                <input type="text" id="nome" required class="w-full border rounded-lg px-3 py-2 mt-1">
+            <div class="flex flex-wrap gap-4">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Nome</label>
+                    <input type="text" id="nome" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">NIF</label>
+                    <input type="text" id="nif" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Categoria</label>
+                    <select id="categoria" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                        <option value="">Selecione</option>
+                        {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}">{{ categoria.descricao }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700">NIF</label>
-                <input type="text" id="nif" required class="w-full border rounded-lg px-3 py-2 mt-1">
+            <div class="flex flex-wrap gap-4">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Regiao Tributária</label>
+                    <select id="regiao_tributaria" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                        <option value="">Selecione a região tributária</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Provincia</label>
+                    <select id="provincia" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                        <option value="">Selecione a província</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Município</label>
+                    <select id="municipio" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                        <option value="">Selecione o município</option>
+                    </select>
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700">Categoria</label>
-                <select id="categoria" required class="w-full border rounded-lg px-3 py-2 mt-1">
-                    <option value="">Selecione</option>
-                    {% for categoria in categorias %}
-                        <option value="{{ categoria.id }}">{{ categoria.descricao }}</option>
-                    {% endfor %}
-                </select>
+            <div class="flex flex-wrap gap-4">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Repartição</label>
+                    <select id="reparticao" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                        <option value="">Selecione a repartição</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Referência</label>
+                    <input type="text" id="referencia" required class="w-full border rounded-lg px-3 py-2 mt-1" readonly>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700">Número de Estabelecimento</label>
+                    <input type="text" id="numero_estabelecimento" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                </div>
             </div>
-            <div class="mb-4">
-                <label class="block text-gray-700">Status</label>
-                <select id="situacao" required class="w-full border rounded-lg px-3 py-2 mt-1">
-                    <option value="regulada">Ativo</option>
-                    <option value="fora">Fora de Actividade</option>
-                    <option value="pendente">Pendente</option>
-                </select>
-            </div>
-            <div class="mb-4 flex gap-4">
-                <div class="w-1/2">
+            <div class="flex flex-wrap gap-4">
+                <div class="mb-4">
+                    <label class="block text-gray-700">Status</label>
+                    <select id="situacao" required class="w-full border rounded-lg px-3 py-2 mt-1">
+                        <option value="regulada">Ativo</option>
+                        <option value="fora">Fora de Actividade</option>
+                        <option value="pendente">Pendente</option>
+                    </select>
+                </div>
+                <div class="mb-4">
                     <label class="block text-gray-700">Latitude</label>
                     <input type="text" id="latitude" name="latitude" required step="any" class="w-full border rounded-lg px-3 py-2 mt-1" readonly>
                 </div>
-                <div class="w-1/2">
+                <div class="mb-4">
                     <label class="block text-gray-700">Longitude</label>
                     <input type="text" id="longitude" name="longitude" required step="any" class="w-full border rounded-lg px-3 py-2 mt-1" readonly>
                 </div>
